@@ -1,0 +1,65 @@
+{%
+	function fmt(value) {
+		value = flt(value);
+		var text = format_number(Math.abs(value), null, 2);
+		return value < 0 ? "(" + text + ")" : text;
+	}
+	function date(value) {
+		return value ? frappe.datetime.str_to_user(value) : "";
+	}
+	var sn = 0;
+%}
+<style>
+	.sir-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+	.sir-table th { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 4px; }
+	.sir-table td { padding: 6px 4px; border-bottom: 1px solid #eee; vertical-align: top; }
+	.sir-table .num { text-align: right; white-space: nowrap; }
+	.sir-table tr.total td { font-weight: bold; border-top: 1px solid #000; border-bottom: 3px double #000; }
+</style>
+
+<h3 class="text-center" style="margin-bottom: 4px;">{%= __("Sales Invoices") %}</h3>
+<p class="text-right" style="font-size: 11px;">
+	{%= __("Invoice Date") %} = {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %}
+</p>
+
+<table class="sir-table">
+	<thead>
+		<tr>
+			<th>{%= __("S/N") %}</th>
+			<th>{%= __("Date") %}</th>
+			<th>{%= __("Invoice No") %}</th>
+			<th>{%= __("Customer") %}</th>
+			<th>{%= __("Sales Person") %}</th>
+			<th class="num">{%= __("Amount") %}</th>
+			<th class="num">{%= __("Discount") %}</th>
+			<th class="num">{%= __("Round off") %}</th>
+			<th class="num">{%= __("VAT Amount") %}</th>
+			<th class="num">{%= __("Net Amount") %}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for (var i = 0; i < data.length; i++) { var row = data[i]; %}
+			{% if (row.is_total_row) { %}
+			<tr class="total">
+				<td colspan="5"></td>
+			{% } else { %}
+			<tr>
+				<td>{%= ++sn %}</td>
+				<td>{%= date(row.posting_date) %}</td>
+				<td>{%= row.invoice_no %}</td>
+				<td>{%= row.customer %}</td>
+				<td>{%= row.sales_person || "" %}</td>
+			{% } %}
+				<td class="num">{%= fmt(row.amount) %}</td>
+				<td class="num">{%= fmt(row.discount) %}</td>
+				<td class="num">{%= fmt(row.round_off) %}</td>
+				<td class="num">{%= fmt(row.vat_amount) %}</td>
+				<td class="num">{%= fmt(row.net_amount) %}</td>
+			</tr>
+		{% } %}
+	</tbody>
+</table>
+
+<p class="text-right text-muted" style="font-size: 10px; margin-top: 12px;">
+	{%= __("Printed on") %} {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}
+</p>

@@ -1,0 +1,86 @@
+{%
+	function fmt(value) {
+		if (value === undefined || value === null || value === "") return "";
+		value = flt(value);
+		var text = format_number(Math.abs(value), null, 2);
+		return value < 0 ? "(" + text + ")" : text;
+	}
+	function amount(value) {
+		return flt(value) ? fmt(value) : "";
+	}
+	function date(value) {
+		return value ? frappe.datetime.str_to_user(value) : "";
+	}
+	var head = data.length ? data[0] : {};
+%}
+<style>
+	.cs-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+	.cs-table th { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 6px 4px; }
+	.cs-table td { padding: 6px 4px; border-bottom: 1px solid #eee; }
+	.cs-table .num { text-align: right; white-space: nowrap; }
+	.cs-table tr.movement td.num { border-top: 1px solid #000; }
+	.cs-table tr.closing td { font-weight: bold; }
+	.cs-table tr.closing td.num { border-top: 1px solid #000; border-bottom: 3px double #000; }
+	.cs-sign { margin-top: 80px; width: 100%; font-size: 12px; }
+	.cs-sign td { width: 50%; padding-top: 30px; }
+	.cs-sign .line { border-bottom: 1px dashed #000; width: 220px; display: inline-block; }
+</style>
+
+<h4 class="text-center" style="margin-bottom: 4px;">{%= __("Customer Statement") %}</h4>
+<p class="text-right" style="font-size: 10px;">
+	{%= __("Period") %}:= {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %},
+	{%= __("Customer Name") %}:= {%= filters.customer %}
+</p>
+<hr style="margin: 4px 0;">
+<table style="width: 100%; font-size: 11px; margin-bottom: 8px;">
+	<tr>
+		<td><b>{%= head.customer_name || filters.customer %}</b>&nbsp;&nbsp;{%= head.customer_phone || "" %}</td>
+		<td class="text-right">{%= __("Currency in") %} <b>{%= head.currency || "" %}</b></td>
+	</tr>
+</table>
+
+<table class="cs-table">
+	<thead>
+		<tr>
+			<th>{%= __("Date") %}</th>
+			<th>{%= __("Doc No") %}</th>
+			<th>{%= __("Doc Type") %}</th>
+			<th>{%= __("PO No") %}</th>
+			<th>{%= __("Remarks") %}</th>
+			<th class="num">{%= __("Debit") %}</th>
+			<th class="num">{%= __("Credit") %}</th>
+			<th class="num">{%= __("Balance") %}</th>
+		</tr>
+	</thead>
+	<tbody>
+		{% for (var i = 0; i < data.length; i++) { var row = data[i]; %}
+			{% if (row.row_type === "movement" || row.row_type === "closing") { %}
+			<tr class="{%= row.row_type %}">
+				<td colspan="4" style="border-bottom: none;"></td>
+				<td class="text-right" style="border-bottom: none;">{%= row.remarks %}</td>
+				<td class="num">{%= fmt(row.debit) %}</td>
+				<td class="num">{%= fmt(row.credit) %}</td>
+				<td class="num">{%= fmt(row.balance) %}</td>
+			</tr>
+			{% } else { %}
+			<tr>
+				<td>{%= date(row.posting_date) %}</td>
+				<td>{%= row.voucher_no || "" %}</td>
+				<td>{%= row.doc_type || "" %}</td>
+				<td>{%= row.po_no || "" %}</td>
+				<td>{%= row.remarks || "" %}</td>
+				<td class="num">{%= amount(row.debit) %}</td>
+				<td class="num">{%= amount(row.credit) %}</td>
+				<td class="num">{%= fmt(row.balance) %}</td>
+			</tr>
+			{% } %}
+		{% } %}
+	</tbody>
+</table>
+
+<table class="cs-sign">
+	<tr>
+		<td>{%= __("Accountant") %}<br><br><span class="line"></span></td>
+		<td class="text-right">{%= __("Customer") %}<br><br><span class="line"></span></td>
+	</tr>
+</table>

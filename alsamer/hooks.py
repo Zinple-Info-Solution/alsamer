@@ -43,7 +43,10 @@ app_license = "mit"
 # page_js = {"page" : "public/js/file.js"}
 
 # include js in doctype views
-# doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Quotation": "public/js/quotation.js",
+	"Sales Invoice": "public/js/sales_invoice.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
@@ -79,11 +82,35 @@ app_license = "mit"
 # 	"filters": "alsamer.utils.jinja_filters"
 # }
 
+# Fixtures
+# --------
+# Custom fields live in alsamer/fixtures/custom_field.json.
+# After changing one in Customize Form: bench --site <site> export-fixtures --app alsamer
+fixtures = [
+	{
+		"dt": "Custom Field",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Customer-custom_phone_number",
+					"Quotation-custom_free_text",
+					"Sales Order-custom_free_text",
+					"Sales Invoice-custom_free_text",
+					"Sales Invoice-custom_manual_rounding",
+				],
+			]
+		],
+	},
+]
+
 # Installation
 # ------------
 
 # before_install = "alsamer.install.before_install"
-# after_install = "alsamer.install.after_install"
+after_install = "alsamer.install.after_install"
+after_migrate = "alsamer.install.after_migrate"
 
 # Uninstallation
 # ------------
@@ -129,9 +156,9 @@ app_license = "mit"
 # ---------------
 # Override standard doctype classes
 
-# override_doctype_class = {
-# 	"ToDo": "custom_app.overrides.CustomToDo"
-# }
+override_doctype_class = {
+	"Sales Invoice": "alsamer.overrides.sales_invoice.AlsamerSalesInvoice",
+}
 
 # Document Events
 # ---------------
