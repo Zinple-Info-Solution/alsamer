@@ -8,6 +8,7 @@
 		return value ? frappe.datetime.str_to_user(value) : "";
 	}
 	var sn = 0;
+	var header = (report && report.print_header) || {};
 %}
 <style>
 	.sir-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -17,10 +18,26 @@
 	.sir-table tr.total td { font-weight: bold; border-top: 1px solid #000; border-bottom: 3px double #000; }
 </style>
 
-<h3 class="text-center" style="margin-bottom: 4px;">{%= __("Sales Invoices") %}</h3>
-<p class="text-right" style="font-size: 11px;">
-	{%= __("Invoice Date") %} = {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %}
-</p>
+<table style="width: 100%; margin-bottom: 8px;">
+	<tr>
+		<td style="vertical-align: top; font-size: 15px; font-weight: bold;">{%= header.company_name || "" %}</td>
+		<td style="vertical-align: top; text-align: right;">
+			{% if (header.logo) { %}
+			<img src="{%= frappe.urllib.get_full_url(header.logo) %}" style="max-height: 80px; max-width: 220px;">
+			{% } %}
+		</td>
+	</tr>
+</table>
+
+<h3 class="text-center" style="margin-bottom: 4px;">{%= title %}</h3>
+<table style="width: 100%; font-size: 11px; margin-bottom: 6px;">
+	<tr>
+		<td>{%= __("Generated on") %}: {%= frappe.datetime.str_to_user(frappe.datetime.now_datetime()) %}</td>
+		<td class="text-right">
+			{%= __("Invoice Date") %} = {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %}
+		</td>
+	</tr>
+</table>
 
 <table class="sir-table">
 	<thead>
@@ -59,7 +76,3 @@
 		{% } %}
 	</tbody>
 </table>
-
-<p class="text-right text-muted" style="font-size: 10px; margin-top: 12px;">
-	{%= __("Printed on") %} {%= frappe.datetime.str_to_user(frappe.datetime.get_datetime_as_string()) %}
-</p>

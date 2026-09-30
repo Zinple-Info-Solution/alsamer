@@ -12,6 +12,7 @@
 		return value ? frappe.datetime.str_to_user(value) : "";
 	}
 	var head = data.length ? data[0] : {};
+	var header = (report && report.print_header) || {};
 %}
 <style>
 	.cs-table { width: 100%; border-collapse: collapse; font-size: 11px; }
@@ -26,11 +27,27 @@
 	.cs-sign .line { border-bottom: 1px dashed #000; width: 220px; display: inline-block; }
 </style>
 
-<h4 class="text-center" style="margin-bottom: 4px;">{%= __("Customer Statement") %}</h4>
-<p class="text-right" style="font-size: 10px;">
-	{%= __("Period") %}:= {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %},
-	{%= __("Customer Name") %}:= {%= filters.customer %}
-</p>
+<table style="width: 100%; margin-bottom: 8px;">
+	<tr>
+		<td style="vertical-align: top; font-size: 15px; font-weight: bold;">{%= header.company_name || "" %}</td>
+		<td style="vertical-align: top; text-align: right;">
+			{% if (header.logo) { %}
+			<img src="{%= frappe.urllib.get_full_url(header.logo) %}" style="max-height: 80px; max-width: 220px;">
+			{% } %}
+		</td>
+	</tr>
+</table>
+
+<h4 class="text-center" style="margin-bottom: 4px;">{%= title %}</h4>
+<table style="width: 100%; font-size: 10px;">
+	<tr>
+		<td>{%= __("Generated on") %}: {%= frappe.datetime.str_to_user(frappe.datetime.now_datetime()) %}</td>
+		<td class="text-right">
+			{%= __("Period") %}:= {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %},
+			{%= __("Customer Name") %}:= {%= filters.customer %}
+		</td>
+	</tr>
+</table>
 <hr style="margin: 4px 0;">
 <table style="width: 100%; font-size: 11px; margin-bottom: 8px;">
 	<tr>

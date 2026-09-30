@@ -26,7 +26,9 @@ SALES_INVOICE_HIDDEN_FIELDS = (
 	"loyalty_points_redemption",
 )
 
-SALES_INVOICE_NAMING_SERIES = ("ACC-SINV-.YYYY.-.####", "ACC-SINV-RET-.YYYY.-.####")
+# Plain 5-digit number, no prefix: 00001, 00002, ... It never resets, and
+# credit notes take the next number in the same sequence.
+SALES_INVOICE_NAMING_SERIES = (".#####",)
 
 
 def after_install():
@@ -36,8 +38,6 @@ def after_install():
 def after_migrate():
 	setters = [
 		*[("Sales Invoice", f, "hidden", "1", "Check") for f in SALES_INVOICE_HIDDEN_FIELDS],
-		# 4-digit counter. The prefix is unchanged, so the counter carries on
-		# from the existing one (ACC-SINV-2026-00016 -> ACC-SINV-2026-0017).
 		("Sales Invoice", "naming_series", "options", "\n".join(SALES_INVOICE_NAMING_SERIES), "Text"),
 		("Sales Invoice", "naming_series", "default", SALES_INVOICE_NAMING_SERIES[0], "Text"),
 		# Rounding Adjustment is editable only when Manual Rounding Adjustment is ticked.

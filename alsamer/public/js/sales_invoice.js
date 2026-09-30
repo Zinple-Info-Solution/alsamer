@@ -34,6 +34,14 @@
 })();
 
 frappe.ui.form.on("Sales Invoice", {
+	onload(frm) {
+		alsamer.apply_fixed_item_columns(frm);
+	},
+
+	refresh(frm) {
+		alsamer.apply_fixed_item_columns(frm);
+	},
+
 	custom_manual_rounding(frm) {
 		frm.cscript.calculate_taxes_and_totals();
 	},

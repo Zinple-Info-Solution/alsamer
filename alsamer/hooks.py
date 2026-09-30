@@ -44,8 +44,8 @@ app_license = "mit"
 
 # include js in doctype views
 doctype_js = {
-	"Quotation": "public/js/quotation.js",
-	"Sales Invoice": "public/js/sales_invoice.js",
+	"Quotation": ["public/js/item_grid_columns.js", "public/js/quotation.js"],
+	"Sales Invoice": ["public/js/item_grid_columns.js", "public/js/sales_invoice.js"],
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -95,10 +95,9 @@ fixtures = [
 				"in",
 				[
 					"Customer-custom_phone_number",
-					"Quotation-custom_free_text",
-					"Sales Order-custom_free_text",
-					"Sales Invoice-custom_free_text",
 					"Sales Invoice-custom_manual_rounding",
+					"Quotation Item-custom_comments",
+					"Sales Invoice Item-custom_comments",
 				],
 			]
 		],

@@ -18,4 +18,13 @@ frappe.query_reports["Sales Invoice Register"] = {
 			fieldtype: "Date",
 		},
 	],
+
+	// Company name and logo for the print header, re-read on every refresh
+	// so it follows the Company filter.
+	after_datatable_render() {
+		const report = frappe.query_report;
+		frappe
+			.xcall("alsamer.api.get_print_header", { company: report.get_filter_value("company") })
+			.then((header) => (report.print_header = header));
+	},
 };
