@@ -44,8 +44,16 @@ app_license = "mit"
 
 # include js in doctype views
 doctype_js = {
-	"Quotation": ["public/js/item_grid_columns.js", "public/js/quotation.js"],
-	"Sales Invoice": ["public/js/item_grid_columns.js", "public/js/sales_invoice.js"],
+	"Quotation": [
+		"public/js/item_grid_columns.js",
+		"public/js/manual_rounding.js",
+		"public/js/quotation.js",
+	],
+	"Sales Invoice": [
+		"public/js/item_grid_columns.js",
+		"public/js/manual_rounding.js",
+		"public/js/sales_invoice.js",
+	],
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
@@ -96,6 +104,8 @@ fixtures = [
 				[
 					"Customer-custom_phone_number",
 					"Sales Invoice-custom_manual_rounding",
+					"Sales Invoice-custom_mode_of_payment",
+					"Quotation-custom_manual_rounding",
 					"Quotation Item-custom_comments",
 					"Sales Invoice Item-custom_comments",
 				],
@@ -157,6 +167,7 @@ after_migrate = "alsamer.install.after_migrate"
 
 override_doctype_class = {
 	"Sales Invoice": "alsamer.overrides.sales_invoice.AlsamerSalesInvoice",
+	"Quotation": "alsamer.overrides.quotation.AlsamerQuotation",
 }
 
 # Document Events

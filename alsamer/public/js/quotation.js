@@ -1,3 +1,5 @@
+alsamer.setup_manual_rounding("Quotation", erpnext.selling.QuotationController);
+
 frappe.ui.form.on("Quotation", {
 	setup(frm) {
 		frm.custom_make_buttons = { ...frm.custom_make_buttons, "Sales Invoice": "Sales Invoice" };

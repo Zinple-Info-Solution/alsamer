@@ -1,5 +1,3 @@
-import re
-
 import frappe
 
 IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "svg", "webp"}
@@ -9,9 +7,8 @@ IMAGE_EXTENSIONS = {"png", "jpg", "jpeg", "gif", "svg", "webp"}
 def get_print_header(company=None):
 	"""Company name and logo for the Alsamer report print headers.
 
-	The logo is the first found of: the Company Logo field, an image attached
-	to the Company record, or the image of its Default Letter Head (its Image,
-	or else the first <img> in its HTML).
+	The logo is the image attached to the Company record (its Attachments),
+	and nothing else.
 	"""
 	company = (
 		company
@@ -21,18 +18,10 @@ def get_print_header(company=None):
 	if not company or not frappe.db.exists("Company", company):
 		return {}
 
-	company_name, logo, letter_head = frappe.get_cached_value(
-		"Company", company, ["company_name", "company_logo", "default_letter_head"]
-	)
-	logo = (
-		logo
-		or _attached_image(company)
-		or _letter_head_image(
-			letter_head or frappe.db.get_value("Letter Head", {"is_default": 1, "disabled": 0})
-		)
-	)
-
-	return {"company_name": company_name, "logo": logo}
+	return {
+		"company_name": frappe.get_cached_value("Company", company, "company_name"),
+		"logo": _attached_image(company),
+	}
 
 
 def _attached_image(company):
@@ -48,15 +37,3 @@ def _attached_image(company):
 		if (f.file_url or "").lower().rsplit(".", 1)[-1] in IMAGE_EXTENSIONS:
 			return f.file_url
 	return None
-
-
-def _letter_head_image(letter_head):
-	if not letter_head:
-		return None
-	lh = frappe.db.get_value("Letter Head", letter_head, ["image", "content"], as_dict=True)
-	if not lh:
-		return None
-	if lh.image:
-		return lh.image
-	match = re.search(r"""<img[^>]+src=["']([^"']+)["']""", lh.content or "")
-	return match.group(1) if match else None

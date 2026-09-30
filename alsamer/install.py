@@ -9,7 +9,7 @@ its Property Setter (or unticking Hidden in Customize Form).
 import frappe
 from frappe.custom.doctype.property_setter.property_setter import make_property_setter
 
-# Sales Invoice sections/fields not used here. The first eight are also hidden
+# Sales Invoice sections/fields not used here. The first seven are also hidden
 # by thameen_erp; repeated so this app gives the same form on its own.
 SALES_INVOICE_HIDDEN_FIELDS = (
 	"accounting_dimensions_section",
@@ -19,7 +19,6 @@ SALES_INVOICE_HIDDEN_FIELDS = (
 	"named_place",
 	"scan_barcode",
 	"time_sheet_list",
-	"more_info_tab",
 	"is_pos",
 	"use_company_roundoff_cost_center",
 	"pricing_rule_details",
@@ -38,11 +37,20 @@ def after_install():
 def after_migrate():
 	setters = [
 		*[("Sales Invoice", f, "hidden", "1", "Check") for f in SALES_INVOICE_HIDDEN_FIELDS],
+		# More Info tab shown. thameen_erp hides it on every migrate; alsamer is
+		# installed after it, so this runs later and wins.
+		("Sales Invoice", "more_info_tab", "hidden", "0", "Check"),
 		("Sales Invoice", "naming_series", "options", "\n".join(SALES_INVOICE_NAMING_SERIES), "Text"),
 		("Sales Invoice", "naming_series", "default", SALES_INVOICE_NAMING_SERIES[0], "Text"),
 		# Rounding Adjustment is editable only when Manual Rounding Adjustment is ticked.
-		("Sales Invoice", "rounding_adjustment", "read_only", "0", "Check"),
-		("Sales Invoice", "rounding_adjustment", "read_only_depends_on", "eval:!doc.custom_manual_rounding", "Data"),
+		*[
+			setter
+			for doctype in ("Sales Invoice", "Quotation")
+			for setter in (
+				(doctype, "rounding_adjustment", "read_only", "0", "Check"),
+				(doctype, "rounding_adjustment", "read_only_depends_on", "eval:!doc.custom_manual_rounding", "Data"),
+			)
+		],
 		("Customer", None, "search_fields", _customer_search_fields(), "Data"),
 		# Customer fields everywhere show the Customer Name, not the ID.
 		("Customer", None, "show_title_field_in_link", "1", "Check"),
@@ -52,6 +60,18 @@ def after_migrate():
 			make_property_setter(doctype, fieldname, prop, value, prop_type, for_doctype=not fieldname)
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), "Alsamer Property Setter")
+
+	_ensure_mode_of_payment("POS", "Bank")
+
+
+def _ensure_mode_of_payment(name, mode_type):
+	"""Create the Mode of Payment if missing. An existing one is left alone, so
+	its accounts and type stay as the user configured them."""
+	if frappe.db.exists("Mode of Payment", name):
+		return
+	frappe.get_doc({"doctype": "Mode of Payment", "mode_of_payment": name, "type": mode_type, "enabled": 1}).insert(
+		ignore_permissions=True
+	)
 
 
 def _customer_search_fields():
