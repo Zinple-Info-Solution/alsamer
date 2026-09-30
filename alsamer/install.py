@@ -44,6 +44,8 @@ def after_migrate():
 		("Sales Invoice", "rounding_adjustment", "read_only", "0", "Check"),
 		("Sales Invoice", "rounding_adjustment", "read_only_depends_on", "eval:!doc.custom_manual_rounding", "Data"),
 		("Customer", None, "search_fields", _customer_search_fields(), "Data"),
+		# Customer fields everywhere show the Customer Name, not the ID.
+		("Customer", None, "show_title_field_in_link", "1", "Check"),
 	]
 	for doctype, fieldname, prop, value, prop_type in setters:
 		try:

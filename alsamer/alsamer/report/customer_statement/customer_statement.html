@@ -44,7 +44,7 @@
 		<td>{%= __("Generated on") %}: {%= frappe.datetime.str_to_user(frappe.datetime.now_datetime()) %}</td>
 		<td class="text-right">
 			{%= __("Period") %}:= {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %},
-			{%= __("Customer Name") %}:= {%= filters.customer %}
+			{%= __("Customer Name") %}:= {%= head.customer_name || filters.customer %}
 		</td>
 	</tr>
 </table>

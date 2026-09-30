@@ -6,6 +6,7 @@ frappe.provide("alsamer");
 
 alsamer.FIXED_ITEM_COLUMNS = [
 	{ fieldname: "item_code", columns: 2 },
+	{ fieldname: "item_name", columns: 2 },
 	{ fieldname: "custom_comments", columns: 2 },
 	{ fieldname: "qty", columns: 1 },
 	{ fieldname: "uom", columns: 1 },
