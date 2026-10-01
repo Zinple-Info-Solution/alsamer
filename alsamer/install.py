@@ -63,17 +63,20 @@ def after_migrate():
 		except Exception:
 			frappe.log_error(frappe.get_traceback(), "Alsamer Property Setter")
 
-	_ensure_mode_of_payment("POS", "Bank")
+	# 48 = bank card, in the UNTDID 4461 payment means codes ZATCA uses.
+	_ensure_mode_of_payment("POS", "Bank", zatca_payment_means_code="48")
 
 
-def _ensure_mode_of_payment(name, mode_type):
+def _ensure_mode_of_payment(name, mode_type, zatca_payment_means_code=None):
 	"""Create the Mode of Payment if missing. An existing one is left alone, so
 	its accounts and type stay as the user configured them."""
 	if frappe.db.exists("Mode of Payment", name):
 		return
-	frappe.get_doc({"doctype": "Mode of Payment", "mode_of_payment": name, "type": mode_type, "enabled": 1}).insert(
-		ignore_permissions=True
-	)
+	doc = frappe.get_doc({"doctype": "Mode of Payment", "mode_of_payment": name, "type": mode_type, "enabled": 1})
+	# Required on sites with the ZATCA app installed; absent elsewhere.
+	if zatca_payment_means_code and doc.meta.has_field("custom_zatca_payment_means_code"):
+		doc.custom_zatca_payment_means_code = zatca_payment_means_code
+	doc.insert(ignore_permissions=True)
 
 
 def _customer_search_fields():
