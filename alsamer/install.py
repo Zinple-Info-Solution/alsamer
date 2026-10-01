@@ -54,6 +54,8 @@ def after_migrate():
 		("Customer", None, "search_fields", _customer_search_fields(), "Data"),
 		# Customer fields everywhere show the Customer Name, not the ID.
 		("Customer", None, "show_title_field_in_link", "1", "Check"),
+		# ERPNext's three Supplier Types, plus Cash and Credit.
+		("Supplier", "supplier_type", "options", "Company\nIndividual\nPartnership\nCash\nCredit", "Text"),
 	]
 	for doctype, fieldname, prop, value, prop_type in setters:
 		try:
