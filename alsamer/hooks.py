@@ -105,6 +105,7 @@ fixtures = [
 					"Customer-custom_phone_number",
 					"Sales Invoice-custom_manual_rounding",
 					"Sales Invoice-custom_mode_of_payment",
+					"Sales Invoice-custom_customer_arabic_name",
 					"Quotation-custom_manual_rounding",
 					"Quotation Item-custom_comments",
 					"Sales Invoice Item-custom_comments",
