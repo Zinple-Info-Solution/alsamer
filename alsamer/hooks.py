@@ -54,6 +54,7 @@ doctype_js = {
 		"public/js/manual_rounding.js",
 		"public/js/sales_invoice.js",
 	],
+	"Delivery Note": ["public/js/item_grid_columns.js", "public/js/delivery_note.js"],
 }
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}

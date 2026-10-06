@@ -1,4 +1,4 @@
-// Fixed Items table columns, shared by Quotation and Sales Invoice.
+// Fixed Items table columns, shared by Quotation, Sales Invoice and Delivery Note.
 // Form scripts run in the page's global scope, so everything lives under
 // `alsamer.` — a top-level `const` here would clash once both forms are opened.
 
