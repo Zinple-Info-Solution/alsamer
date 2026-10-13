@@ -22,7 +22,7 @@ def get_columns():
 		{"fieldname": "posting_date", "label": _("Date"), "fieldtype": "Date", "width": 100},
 		{"fieldname": "invoice_no", "label": _("Invoice No"), "fieldtype": "Link", "options": "Sales Invoice", "width": 170},
 		{"fieldname": "customer", "label": _("Customer"), "fieldtype": "Data", "width": 240},
-		{"fieldname": "sales_person", "label": _("Sales Person"), "fieldtype": "Data", "width": 140},
+		{"fieldname": "mode_of_payment", "label": _("Mode of Payment"), "fieldtype": "Data", "width": 130},
 		currency("amount", "Amount"),
 		currency("discount", "Discount"),
 		currency("round_off", "Round off"),
@@ -50,6 +50,7 @@ def get_data(filters):
 			"posting_date",
 			"company",
 			"customer_name",
+			"custom_mode_of_payment",
 			"base_total",
 			"base_discount_amount",
 			"base_rounding_adjustment",
@@ -59,17 +60,12 @@ def get_data(filters):
 		],
 		order_by="posting_date asc, name asc",
 	)
-	if not invoices:
-		return []
-
-	sales_persons = get_sales_persons([inv.name for inv in invoices])
-
 	return [
 		{
 			"posting_date": inv.posting_date,
 			"invoice_no": inv.name,
 			"customer": inv.customer_name,
-			"sales_person": sales_persons.get(inv.name, ""),
+			"mode_of_payment": inv.custom_mode_of_payment or "",
 			"amount": inv.base_total,
 			"discount": inv.base_discount_amount,
 			"round_off": inv.base_rounding_adjustment,
@@ -79,16 +75,3 @@ def get_data(filters):
 		}
 		for inv in invoices
 	]
-
-
-def get_sales_persons(invoice_names):
-	rows = frappe.get_all(
-		"Sales Team",
-		filters={"parenttype": "Sales Invoice", "parent": ["in", invoice_names]},
-		fields=["parent", "sales_person"],
-		order_by="idx asc",
-	)
-	persons = {}
-	for row in rows:
-		persons.setdefault(row.parent, []).append(row.sales_person)
-	return {parent: ", ".join(names) for parent, names in persons.items()}

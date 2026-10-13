@@ -46,7 +46,7 @@
 			<th>{%= __("Date") %}</th>
 			<th>{%= __("Invoice No") %}</th>
 			<th>{%= __("Customer") %}</th>
-			<th>{%= __("Sales Person") %}</th>
+			<th>{%= __("Mode of Payment") %}</th>
 			<th class="num">{%= __("Amount") %}</th>
 			<th class="num">{%= __("Discount") %}</th>
 			<th class="num">{%= __("Round off") %}</th>
@@ -65,7 +65,7 @@
 				<td>{%= date(row.posting_date) %}</td>
 				<td>{%= row.invoice_no %}</td>
 				<td>{%= row.customer %}</td>
-				<td>{%= row.sales_person || "" %}</td>
+				<td>{%= row.mode_of_payment || "" %}</td>
 			{% } %}
 				<td class="num">{%= fmt(row.amount) %}</td>
 				<td class="num">{%= fmt(row.discount) %}</td>
