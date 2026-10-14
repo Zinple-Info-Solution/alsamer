@@ -60,6 +60,15 @@ def get_data(filters):
 		],
 		order_by="posting_date asc, name asc",
 	)
+
+	start, end = get_invoice_range(filters)
+	if start is not None:
+		invoices = [
+			inv
+			for inv in invoices
+			if inv.name.isdigit() and int(inv.name) >= start and (end is None or int(inv.name) <= end)
+		]
+
 	return [
 		{
 			"posting_date": inv.posting_date,
@@ -75,3 +84,21 @@ def get_data(filters):
 		}
 		for inv in invoices
 	]
+
+
+def get_invoice_range(filters):
+	"""(start, end) of the From / To Invoice No filters, compared as numbers so
+	100000 sorts after 99999. (None, None) while they are at their defaults
+	(From 00001, To empty): then every invoice is shown, including older ones
+	whose names are not plain numbers."""
+	from_no = (filters.from_invoice or "").strip()
+	to_no = (filters.to_invoice or "").strip()
+	for value in (from_no, to_no):
+		if value and not value.isdigit():
+			frappe.throw(_("Invoice No filters take numbers only, like 00001."))
+
+	start = int(from_no or 1)
+	end = int(to_no) if to_no else None
+	if start <= 1 and end is None:
+		return None, None
+	return start, end

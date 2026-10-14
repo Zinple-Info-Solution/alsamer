@@ -35,6 +35,9 @@
 		<td>{%= __("Generated on") %}: {%= frappe.datetime.str_to_user(frappe.datetime.now_datetime()) %}</td>
 		<td class="text-right">
 			{%= __("Invoice Date") %} = {%= date(filters.from_date) || __("Start") %} - {%= date(filters.to_date) || __("Today") %}
+			{% if (filters.to_invoice || (filters.from_invoice && flt(filters.from_invoice) > 1)) { %}
+			<br>{%= __("Invoice No") %} = {%= filters.from_invoice || "00001" %} - {%= filters.to_invoice || __("Last") %}
+			{% } %}
 		</td>
 	</tr>
 </table>

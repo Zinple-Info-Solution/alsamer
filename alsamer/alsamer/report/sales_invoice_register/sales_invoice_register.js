@@ -17,6 +17,18 @@ frappe.query_reports["Sales Invoice Register"] = {
 			label: __("To Date"),
 			fieldtype: "Date",
 		},
+		{
+			fieldname: "from_invoice",
+			label: __("From Invoice No"),
+			fieldtype: "Data",
+			default: "00001",
+		},
+		{
+			// Empty = no upper limit.
+			fieldname: "to_invoice",
+			label: __("To Invoice No"),
+			fieldtype: "Data",
+		},
 	],
 
 	// Company name and logo for the print header, re-read on every refresh
